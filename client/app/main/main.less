@@ -1,30 +1,45 @@
-.thing-form {
-  margin: 20px 0;
+#view-wrapper {
+    .row {
+        height: 100%;
+    }
 }
 
-#banner {
-    border-bottom: none;
-    margin-top: -20px;
+.col-inner {
+    margin: 0px 15px;
 }
 
-#banner h1 {
-    font-size: 60px;
-    line-height: 1;
-    letter-spacing: -1px;
+#sidebar {
+    position: fixed;
+    height: 100%;
+    background-color: @clouds;
+
+    ul {
+        padding: 0px;
+
+        li {
+            list-style: none;
+            margin-top: 15px;
+        }
+    }
 }
 
-.hero-unit {
+#main-wrapper {
     position: relative;
-    padding: 30px 15px;
-    color: #F5F5F5;
-    text-align: center;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    background: #4393B9;
+    left: 25%;
+    min-height: 100%;
+    background-color: #ffffff;
 }
 
-.footer {
+#main {
+    margin-bottom:  60px;
+}
+
+#footer {
+    background-color: inherit;
     text-align: center;
-    padding: 30px 0;
-    margin-top: 70px;
-    border-top: 1px solid #E5E5E5;
+    padding: 20px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
 }

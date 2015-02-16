@@ -2,10 +2,20 @@
 
 angular.module('calendarApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
-    $scope.menu = [{
-      'title': 'Home',
-      'link': '/'
-    }];
+    $scope.menu = [
+      {
+        'title': 'Configuration',
+        'link': '/configuration'
+      },
+      {
+        'title': 'Projects',
+        'link': '/projects'
+      },
+      {
+        'title': 'Members',
+        'link': '/members'
+      }
+    ];
 
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
