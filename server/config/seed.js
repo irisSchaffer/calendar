@@ -7,6 +7,7 @@
 
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
+var Configuration = require('../api/configuration/configuration.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -47,3 +48,11 @@ User.find({}).remove(function() {
     }
   );
 });
+
+Configuration.find({}).remove(function() {
+  Configuration.create({
+    'daysPerWeek': 5,
+  }, function() {
+    console.log('finished setting default configuration');
+  });
+})
