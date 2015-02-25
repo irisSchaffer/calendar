@@ -1,0 +1,16 @@
+<div id="main">
+  <div class="col-inner">
+    <h1>Configuration</h1>
+    <p>You can change the calendar's base configuration used for analysing the images here.</p>
+
+  <form novalidate name="configuration" ng-submit="update(configuration)">
+    <div class="form-group">
+        <label class="control-label">Days per Week</label>
+        <input type="text" ng-model="configuration.daysPerWeek" class="form-control" required />
+    </div>
+    <div>
+        <input type="submit" class="btn btn-primary" value="Save" />
+    </div>
+  </form>
+  </div>
+</div>

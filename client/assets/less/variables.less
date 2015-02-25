@@ -1,0 +1,24 @@
+@icon-font-path:   '/bower_components/bootstrap/fonts/';
+@icon-font-name:   'glyphicons-halflings-regular';
+@icon-font-svg-id: 'glyphicons_halflingsregular';
+@fa-font-path:     '/bower_components/font-awesome/fonts';
+
+@white:                 #ffffff;
+
+@brand-primary:         @alizarin;
+@brand-secondary:       @pomegranate;
+@text-color:            @wet-asphalt;
+
+@link-color:            @brand-primary;
+@link-hover-color:      lighten(@link-color, 10%);
+
+@btn-primary-hover-bg:  mix(@brand-primary, white, 80%);
+@btn-primary-active-bg: mix(@brand-primary, black, 85%);
+
+.btn-primary {
+  .button-variant(@btn-default-color, @brand-primary, @btn-primary-hover-bg, @btn-primary-active-bg);
+}
+
+.btn-primary-inverse {
+  .button-variant(@brand-primary, @white, @btn-hover-bg, @btn-active-bg);
+}
