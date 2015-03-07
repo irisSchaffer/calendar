@@ -3,14 +3,23 @@
     <h1>Configuration</h1>
     <p>You can change the calendar's base configuration used for analysing the images here.</p>
 
-  <form novalidate name="configuration" ng-submit="update(configuration)">
-    <div class="form-group">
+    <div ng-show="message" class="alert alert-success alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <strong>Success!</strong> {{ message }}
+    </div>
+
+    <form novalidate name="form" ng-submit="update(form)">
+      <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.daysPerWeek.$valid && submitted,
+                                              'has-error': form.daysPerWeek.$invalid && submitted }">
         <label class="control-label">Days per Week</label>
-        <input type="text" ng-model="configuration.daysPerWeek" class="form-control" required />
-    </div>
-    <div>
+        <input type="number" name="daysPerWeek" ng-model="configuration.daysPerWeek" class="form-control" required />
+        <p class="help-block" ng-show="form.daysPerWeek.$error.mongoose">
+          {{ errors.daysPerWeek }}
+        </p>
+      </div>
+      <div>
         <input type="submit" class="btn btn-primary" value="Save" />
-    </div>
-  </form>
+      </div>
+    </form>
   </div>
 </div>

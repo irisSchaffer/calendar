@@ -10,24 +10,25 @@ angular.module('calendarApp')
       $scope.configuration = configuration;
     });
 
-    $scope.update = function(configuration) {
+    $scope.update = function(form) {
       $scope.submitted = true;
-      $scope.configuration = configuration;
 
-      console.log(configuration.$valid);
+      if(form.$valid) {
+        $http.put('/api/configuration', $scope.configuration)
+        .then(function() {
+          $scope.message = 'Configuration was updated successfully';
+        })
+        .catch(function(err) {
+          err = err.data;
+          $scope.errors = {};
+          $scope.message = '';
 
-      if(configuration.$valid) {
-        $http.put('/api/configuration', configuration).
-          success(function(data, status, headers, config) {
-            $scope.errors = {};
-
-            if (response.error) {
-              angular.forEach(response.error.errors, function(error, field) {
-                form[field].$setValidity('mongoose', false);
-                $scope.errors[field] = error.message;
-              });
-            }
+          // Update validity of form fields that match the mongoose errors
+          angular.forEach(err.errors, function(error, field) {
+            form[field].$setValidity('mongoose', false);
+            $scope.errors[field] = error.message;
           });
+        });
       }
     };
   });

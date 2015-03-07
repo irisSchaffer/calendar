@@ -22,11 +22,11 @@ exports.show = function (req, res, next) {
  * Update config
  */
 exports.update = function(req, res, next) {
-  console.log(req);
-  Configuration.findOne({}, function (err, config) {
+  Configuration.findOne({}, function (err, configuration) {
     if (err) return next(err);
 
-    config.save(function(err) {
+    configuration.daysPerWeek = req.body.daysPerWeek;
+    configuration.save(function(err) {
       if (err) return validationError(res, err);
       res.send(200);
     });
