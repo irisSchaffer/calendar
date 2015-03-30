@@ -11,8 +11,8 @@
     <form novalidate name="form" ng-submit="update(form)">
       <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.daysPerWeek.$valid && submitted,
                                               'has-error': form.daysPerWeek.$invalid && submitted }">
-        <label class="control-label">Days per Week</label>
-        <input type="number" name="daysPerWeek" ng-model="configuration.daysPerWeek" class="form-control" required />
+        <label class="control-label" for="daysPerWeek">Days per Week</label>
+        <input type="number" name="daysPerWeek" ng-model="configuration.daysPerWeek" class="form-control" required mongoose-error />
         <p class="help-block" ng-show="form.daysPerWeek.$error.mongoose">
           {{ errors.daysPerWeek }}
         </p>
