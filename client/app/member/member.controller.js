@@ -3,27 +3,27 @@
 angular.module('calendarApp')
   .controller('ProjectCtrl', ['$scope', '$http', function ($scope, $http) {
 
-    $scope.projects = {};
-    $scope.project = {};
+    $scope.members = {};
+    $scope.member = {};
     $scope.errors = {};
     $scope.submitted = {};
     $scope.alerts = [];
 
-    $http.get('/api/project').success(function (projects) {
-      $scope.projects = projects;
+    $http.get('/api/member').success(function (members) {
+      $scope.members = members;
     });
 
-    // Create new Project
+    // Create new member
     $scope.create = function (form) {
       $scope.alerts = [];
       $scope.newSubmitted = true;
 
       if (form.$valid) {
-        $http.post('/api/project', $scope.project)
-          .success(function (project) {
-            $scope.alerts.push({'type': 'success', 'heading': 'Great', 'msg': 'Project `' + project.name + '` was added successfully.'});
-            $scope.projects.push($scope.project);
-            $scope.project = {};
+        $http.post('/api/member', $scope.member)
+          .success(function (member) {
+            $scope.alerts.push({'type': 'success', 'heading': 'Great', 'msg': 'Member `' + member.name + '` was added successfully.'});
+            $scope.members.push($scope.member);
+            $scope.member = {};
           })
           .error(function (data) {
             handleErrors(form, form.$name, data);
@@ -31,18 +31,18 @@ angular.module('calendarApp')
       }
     };
 
-    // Update existing project
+    // Update existing member
     $scope.update = function (index) {
       $scope.alerts = [];
       $scope.submitted[index] = true;
 
       var form = this['form' + index];
-      var project = $scope.projects[index];
+      var project = $scope.members[index];
 
       if (form.$valid) {
-        $http.put('/api/project/' + project._id, project)
-          .success(function (project) {
-            $scope.alerts.push({'type': 'success', 'heading': 'Yippie', 'msg': 'Project `' + project.name + '` was updated successfully.'});
+        $http.put('/api/member/' + member._id, member)
+          .success(function (member) {
+            $scope.alerts.push({'type': 'success', 'heading': 'Yippie', 'msg': 'Member `' + member.name + '` was updated successfully.'});
           })
           .error(function (data) {
             handleErrors(form, index, data);
@@ -50,20 +50,22 @@ angular.module('calendarApp')
       }
     };
 
+    // Delete member
     $scope.delete = function (index) {
       $scope.alerts = [];
-      var project = $scope.projects[index];
+      var member = $scope.members[index];
 
-      $http.delete('/api/project/' + project._id)
+      $http.delete('/api/member/' + member._id)
         .success(function() {
-          $scope.projects.splice(index, index + 1);
-          $scope.alerts.push({'type': 'success', 'heading': 'Yeah', 'msg': 'Project `' + project.name + '` was successfully deleted.'});
+          $scope.members.splice(index, index + 1);
+          $scope.alerts.push({'type': 'success', 'heading': 'Yeah', 'msg': 'Member `' + member.name + '` was successfully deleted.'});
         })
         .error(function(data) {
-          $scope.alerts.push({'type': 'danger', 'heading': 'Oops', 'msg': 'Project `' + project.name + '` couldn\'t be removed. Try again later!'});
+          $scope.alerts.push({'type': 'danger', 'heading': 'Oops', 'msg': 'Member `' + member.name + '` couldn\'t be removed. Try again later!'});
         });
     };
 
+    // handles form errors
     function handleErrors(form, formIdentifier, data) {
       $scope.errors = {};
       $scope.errors[formIdentifier] = [];

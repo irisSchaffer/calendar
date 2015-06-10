@@ -6,3 +6,9 @@
 .help-block {
   color: @text-color;
 }
+
+// a bit extreme, but the placeholder color was white and wouldn't change without this hack
+form .form-group input.form-control::-webkit-input-placeholder { color: @silver; }
+form .form-group input.form-control::-moz-placeholder { color: @silver; } /* firefox 19+ */
+form .form-group input.form-control:-ms-input-placeholder { color: @silver; } /* ie */
+form .form-group input.form-control:-moz-placeholder { color: @silver; }

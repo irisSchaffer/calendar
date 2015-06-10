@@ -13,7 +13,7 @@ angular.module('calendarApp')
       },
       {
         'title': 'Members',
-        'link': '/members'
+        'link': '/member'
       }
     ];
 

@@ -23,7 +23,7 @@ angular.module('calendarApp')
       if (form.$valid) {
         $http.put('/api/configuration', $scope.configuration)
           .success(function () {
-            $scope.message = 'Configuration was updated successfully';
+            $scope.message = 'Configuration was updated successfully.';
           })
           .error(function (data) {
             $scope.errors = {};
