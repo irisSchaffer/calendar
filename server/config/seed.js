@@ -51,7 +51,16 @@ User.find({}).remove(function() {
 
 Configuration.find({}).remove(function() {
   Configuration.create({
-    'daysPerWeek': 5
+    'calendarName': 'lego calendar',
+    'daysPerWeek': 5,
+    'morning': {
+      start: new Date('Thu Jan 01 1970 08:30:00 GMT+0100 (CET)'),
+      end: new Date('Thu Jan 01 1970 12:30:00 GMT+0100 (CET)')
+    },
+    'afternoon': {
+      start: new Date('Thu Jan 01 1970 13:00:00 GMT+0100 (CET)'),
+      end: new Date('Thu Jan 01 1970 17:30:00 GMT+0100 (CET)')
+    },
   }, function() {
     console.log('finished setting default configuration');
   });

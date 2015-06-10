@@ -5,9 +5,21 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 
 var ConfigurationSchema = new Schema({
+  calendarName: {
+    type: String,
+    default: 'lego calendar'
+  },
+  morning: {
+    start: Date,
+    end: Date
+  },
+  afternoon: {
+    start: Date,
+    end: Date
+  },
   daysPerWeek: {
     type: Number,
-    default: 5,
+    default: 5
   }
 });
 

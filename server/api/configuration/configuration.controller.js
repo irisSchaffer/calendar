@@ -29,6 +29,9 @@ exports.update = function(req, res, next) {
       return next(err);
     }
 
+    configuration.calendarName = req.body.calendarName;
+    configuration.morning = req.body.morning;
+    configuration.afternoon = req.body.afternoon;
     configuration.daysPerWeek = req.body.daysPerWeek;
     configuration.save(function(err) {
       if (err) {

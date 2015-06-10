@@ -1,7 +1,7 @@
 <div id="main">
   <div class="col-inner">
     <h1>Configuration</h1>
-    <p>You can change the calendar's base configuration used for analysing the images here.</p>
+    <p>You can change the calendar's base configuration used for analysing the images and synchronising with the google calendar here.</p>
 
     <div ng-show="message" class="alert alert-success alert-dismissible fade in" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -9,6 +9,18 @@
     </div>
 
     <form novalidate name="form" ng-submit="update(form)">
+      <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.calendarName.$valid && submitted,
+                                              'has-error': form.calendarName.$invalid && submitted }">
+        <label class="control-label" for="calendarName">Calendar Name</label>
+        <input type="text" name="calendarName" ng-model="configuration.calendarName" class="form-control" required mongoose-error />
+        <p class="help-block" ng-show="form.name.$error.mongoose">
+          {{ errors.name }}
+        </p>
+        <p class="help-block">
+          This name will be used for the synchronised google calendar.
+        </p>
+      </div>
+
       <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.daysPerWeek.$valid && submitted,
                                               'has-error': form.daysPerWeek.$invalid && submitted }">
         <label class="control-label" for="daysPerWeek">Days per Week</label>
@@ -17,6 +29,49 @@
           {{ errors.daysPerWeek }}
         </p>
       </div>
+
+      <fieldset>
+        <legend>Morning Working Hours</legend>
+        <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.morningStart.$valid && submitted,
+                                              'has-error': form.morningStart.$invalid && submitted }">
+          <label class="control-label" for="morningStart">From</label>
+          <input type="time" name="morningStart" ng-model="configuration.morning.start" class="form-control" required mongoose-error />
+          <p class="help-block" ng-show="form.morningStart.$error.mongoose">
+            {{ errors.morningStart }}
+          </p>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.morningEnd.$valid && submitted,
+                                              'has-error': form.morningEnd.$invalid && submitted }">
+          <label class="control-label" for="morningEnd">To</label>
+          <input type="time" name="morningEnd" ng-model="configuration.morning.end" class="form-control" required mongoose-error />
+          <p class="help-block" ng-show="form.morningEnd.$error.mongoose">
+            {{ errors.morningEnd }}
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Afternoon Working Hours</legend>
+        <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.afternoonStart.$valid && submitted,
+                                              'has-error': form.afternoonStart.$invalid && submitted }">
+          <label class="control-label" for="afternoonStart">From</label>
+          <input type="time" name="afternoonStart" ng-model="configuration.afternoon.start" class="form-control" required mongoose-error />
+          <p class="help-block" ng-show="form.afternoonStart.$error.mongoose">
+            {{ errors.afternoonStart }}
+          </p>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-success': !form.$valid && form.afternoonEnd.$valid && submitted,
+                                              'has-error': form.afternoonEnd.$invalid && submitted }">
+          <label class="control-label" for="afternoonEnd">To</label>
+          <input type="time" name="afternoonEnd" ng-model="configuration.afternoon.end" class="form-control" required mongoose-error />
+          <p class="help-block" ng-show="form.afternoonEnd.$error.mongoose">
+            {{ errors.afternoonEnd }}
+          </p>
+        </div>
+      </fieldset>
+
       <div>
         <input type="submit" class="btn btn-primary" value="Save" />
       </div>
