@@ -35,7 +35,7 @@
           <footer id="footer">
             <div class="col-inner">
                 <p>
-                  Built by <a href="http://irisschaffer.com/">Iris Schaffer</a> <span class="separator">•</span>
+                  Built with <i class="fa fa-beer"></i> by <a href="http://irisschaffer.com/">Iris Schaffer</a> <span class="separator">•</span>
                   <a href="https://twitter.com/iris_schaffer">@iris_schaffer</a> <span class="separator">•</span>
                   <a class="github" href="http://github.com/irisSchaffer">GitHub</a>
                 </p>
@@ -72,7 +72,9 @@
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <!-- endbower -->
-      <script src="socket.io-client/socket.io.js"></script>
+      <script src="socket.io/socket.io.js"></script>
+      <script src="http://192.168.0.102:9999/socket.io/socket.io.js"></script>
+
     <!-- endbuild -->
 
         <!-- build:js({.tmp,client}) app/app.js -->
@@ -88,10 +90,14 @@
           <script src="app/configuration/configuration.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
+          <script src="app/project/project.controller.js"></script>
+          <script src="app/project/project.js"></script>
           <script src="components/auth/auth.service.js"></script>
           <script src="components/auth/user.service.js"></script>
+          <script src="components/config/config.constant.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>
+          <script src="components/remote-socket/remote-socket.service.js"></script>
           <script src="components/socket/socket.service.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->

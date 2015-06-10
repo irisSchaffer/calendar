@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('calendarApp')
-  .controller('ConfigurationCtrl', function ($scope, $http) {
+  .controller('ConfigurationCtrl', ['$scope', '$http', function ($scope, $http) {
 
     $scope.configuration = {};
     $scope.errors = {};
@@ -30,4 +30,4 @@ angular.module('calendarApp')
           });
       }
     };
-  });
+  }]);

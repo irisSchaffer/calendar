@@ -51,7 +51,7 @@ User.find({}).remove(function() {
 
 Configuration.find({}).remove(function() {
   Configuration.create({
-    'daysPerWeek': 5,
+    'daysPerWeek': 5
   }, function() {
     console.log('finished setting default configuration');
   });

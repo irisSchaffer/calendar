@@ -13,7 +13,7 @@ exports.show = function (req, res, next) {
     }
 
     if (!config) {
-      return res.status(400).send();
+      return res.send(401);
     }
 
     res.json(config);
@@ -32,7 +32,7 @@ exports.update = function(req, res, next) {
     configuration.daysPerWeek = req.body.daysPerWeek;
     configuration.save(function(err) {
       if (err) {
-        return res.status(400).json(err);
+        return res.status(422).json(err);
       }
 
       res.send(200);

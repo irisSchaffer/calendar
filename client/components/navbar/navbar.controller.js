@@ -9,7 +9,7 @@ angular.module('calendarApp')
       },
       {
         'title': 'Projects',
-        'link': '/projects'
+        'link': '/project'
       },
       {
         'title': 'Members',

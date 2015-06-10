@@ -9,7 +9,7 @@ angular.module('calendarApp')
       restrict: 'A',
       require: 'ngModel',
       link: function(scope, element, attrs, ngModel) {
-        element.on('keydown', function() {
+        element.on('focus', function() {
           return ngModel.$setValidity('mongoose', true);
         });
       }
