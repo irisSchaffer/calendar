@@ -56,7 +56,7 @@ angular.module('calendarApp')
 
       $http.delete('/api/projects/' + project._id)
         .success(function() {
-          $scope.projects.splice(index, index + 1);
+          $scope.projects.splice(index, index);
           $scope.alerts.push({'type': 'success', 'heading': 'Yeah', 'msg': 'Project `' + project.name + '` was successfully deleted.'});
         })
         .error(function(data) {

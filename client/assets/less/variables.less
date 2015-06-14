@@ -19,6 +19,10 @@
   .button-variant(@btn-default-color, @brand-primary, @btn-primary-hover-bg, @btn-primary-active-bg);
 }
 
+.btn-default {
+  .button-variant(@btn-default-color, @wet-asphalt, lighten(@wet-asphalt, 10%), @btn-primary-active-bg);
+}
+
 .btn-primary-inverse {
   .button-variant(@brand-primary, @white, @btn-hover-bg, @btn-active-bg);
 }

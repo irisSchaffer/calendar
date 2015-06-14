@@ -45,23 +45,6 @@ exports.update = function(req, res, next) {
 
     res.json(200);
   });
-
-  //Member.findById(req.params.id, function (err, member) {
-  //  console.log(member);
-  //
-  //  if (err) return next(err);
-  //
-  //  member.name = req.body.name;
-  //  member.position = req.body.position;
-  //
-  //  console.log(member);
-  //
-  //  member.save(function(err) {
-  //    if (err) return res.status(400).json(err);
-  //
-  //    res.json(200, member);
-  //  });
-  //});
 };
 
 /**
