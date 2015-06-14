@@ -1,7 +1,11 @@
 <div id="main">
   <div class="col-inner">
-    <h1>Projects</h1>
-    <p>You can add, edit and delete projects and their lego brick colors here.</p>
+    <h1>Members</h1>
+    <p>
+      You can add, edit and delete your team members here.
+      The sequence of the members here will be used for analysing the analogue calender.
+      To change this sequence, simply <emph>drag</emph> and <emph>drop</emph> the members.
+    </p>
 
     <div ng-repeat="alert in alerts">
       <div ng-show="alerts" class="alert alert-{{alert.type}} alert-dismissible fade in" role="alert">
@@ -10,59 +14,55 @@
       </div>
     </div>
 
-    <div id="project-container">
-      <div class="project row"  ng-repeat="project in projects">
-        <form novalidate name="{{'form' + $index}}" ng-submit="update($index)">
-          <div class="form-group col-sm-3" ng-class="{ 'has-success': {{'form' + $index}}.$invalid && {{'form' + $index}}.color.$valid && submitted[{{$index}}],
-                                              'has-error': submitted[{{$index}}] && {{'form' + $index}}.color.$invalid }">
-            <label class="control-label sr-only" for="color">Color</label>
-            <input type="color" name="color" ng-model="projects[$index].color" placeholder="#ffffff" class="form-control" mongoose-error />
-            <p class="help-block" ng-show="{{'form' + $index}}.color.$error.mongoose">
-              {{ errors[$index].color }}
-            </p>
-          </div>
-          <div class="form-group col-sm-7" ng-class="{ 'has-success': {{'form' + $index}}.$invalid && {{'form' + $index}}.name.$valid && submitted[$index],
+    <ul id="member-container" data-as-sortable="dragControlListeners" data-ng-model="members">
+      <li class="member row"  ng-repeat="member in members" data-as-sortable-item>
+        <form novalidate name="{{'form' + $index}}" ng-submit="update($index)" data-as-sortable-item-handle>
+          <div class="col-sm-1 position">{{ member.position }}.</div>
+          <div class="form-group col-sm-7 col-lg-9" ng-class="{ 'has-success': {{'form' + $index}}.$invalid && {{'form' + $index}}.name.$valid && submitted[$index],
                                               'has-error': submitted[$index] && {{'form' + $index}}.name.$invalid }">
-            <label class="control-label sr-only" for="name">Name</label>
-            <input type="text" name="name" ng-model="projects[$index].name" placeholder="Project Name" class="form-control" mongoose-error />
+            <label class="control-label sr-only" for="name">Member's Name</label>
+            <input type="text" name="name" ng-model="members[$index].name" placeholder="Member's Name" class="form-control" mongoose-error />
             <p class="help-block" ng-show="{{'form' + $index}}.name.$error.mongoose">
               {{ errors[$index].name }}
             </p>
           </div>
-          <div class="col-sm-1">
-            <button type="submit" class="btn btn-primary">
+          <div class="col-sm-2 col-lg-1">
+            <button type="submit" class="btn btn-block btn-primary">
               <span class="glyphicon glyphicon-floppy-disk"></span>
               <span class="sr-only">Update</span>
             </button>
           </div>
-          <div class="col-sm-1">
-            <button type="button" class="btn btn-default" ng-click="delete($index)">
+          <div class="col-sm-2 col-lg-1">
+            <button type="button" class="btn btn-block btn-default" ng-click="delete($index)">
               <span class="glyphicon glyphicon-trash"></span>
               <span class="sr-only">Delete</span>
             </button>
           </div>
         </form>
 
-      </div>
-    </div>
+      </li>
+    </ul>
 
     <h4>Add a Team Member</h4>
 
     After clicking the <emph>Authorize</emph> button, you will be redirected to google, where you can log in and authorize this application to use your calendar.
     But don't worry, we create a new calendar for this application and promise to only ever use that one. Your personal calenders will stay untouched!
 
-    <form class="row" novalidate name="newMemberForm" ng-submit="create(newMemberForm)">
-      <div class="form-group col-sm-7" ng-class="{ 'has-success': newMemberForm.$invalid && newMemberForm.name.$valid && newSubmitted,
-                                              'has-error': newMemberForm && newMemberForm.name.$invalid }">
-        <label class="control-label sr-only" for="name">Name</label>
-        <input type="text" name="name" ng-model="member.name" placeholder="The member's name" class="form-control" mongoose-error />
+    <form class="row" novalidate name="newMemberForm" ng-submit="auth(newMemberForm)">
+      <div class="form-group col-sm-8 col-lg-10" ng-class="{ 'has-success': newMemberForm.$invalid && newMemberForm.name.$valid && newSubmitted,
+                                              'has-error': newMemberForm && newMemberForm.name.$invalid && newSubmitted }">
+        <label class="control-label sr-only" for="name">Member's Name</label>
+        <input type="text" name="name" ng-model="member.name" placeholder="Member's name" class="form-control" mongoose-error required />
         <p class="help-block" ng-show="newMemberForm.name.$error.mongoose">
           {{ errors.newMemberForm.name }}
         </p>
+        <p class="help-block" ng-show="newMemberForm.name.$error.required && newSubmitted">
+          The member's name is required.
+        </p>
       </div>
-      <div class="col-sm-2">
-        <button type="submit" class="btn btn-primary">
-          <span class="glyphicon glyphicon-plus"></span> Authorize
+      <div class="col-sm-4 col-lg-2">
+        <button type="submit" ng-disabled="newMemberForm.$invalid" class="btn btn-block btn-primary">
+          <i class="fa fa-google"></i> Authorize
         </button>
       </div>
     </form>

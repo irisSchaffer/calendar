@@ -1,0 +1,30 @@
+ul#member-container {
+  padding-left: 15px;
+}
+
+// this has to sit outside of ul#member-container, so it will work while dragging and dropping
+li.member {
+  list-style: none;
+  padding-top: 20px;
+  background-color: lighten(@text-color, 10%);
+  margin-bottom: 20px;
+
+  &:hover {
+    cursor: move;
+  }
+
+  .position {
+    background-color: @midnight-blue;
+    margin: -20px 0px;
+    padding: 27px 0px 25px 0px;
+    text-align: center;
+    color: @white;
+  }
+}
+
+.as-sortable-placeholder {
+  border: 2px dashed @text-color;
+  padding-left: 0px;
+  margin-left: -15px;
+  margin-bottom: 20px;
+}

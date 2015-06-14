@@ -2,11 +2,16 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var MemberHighestPosSchema = require('./memberHighestPos.model.js');
 
 var MemberSchema = new Schema({
   name: {
     type: String,
     required: true,
+  },
+  position: {
+    type: Number,
+    required: false,
   },
   calendarId: {
     type: String,
@@ -31,5 +36,15 @@ MemberSchema.path('name').validate(function(value, respond) {
 }, 'You already have a team member of that name.');
 
 
+MemberSchema.pre('save', function(next) {
+  var member = this;
+  if (member.position) return next();
 
-module.exports = mongoose.model('Project', ProjectSchema);
+  MemberHighestPosSchema.findOneAndUpdate({}, { $inc: { highestPos: 1 } }, function (err, highestPos) {
+    if (err) next(err);
+    member.position = highestPos.highestPos - 1;
+    next();
+  });
+});
+
+module.exports = mongoose.model('Member', MemberSchema);

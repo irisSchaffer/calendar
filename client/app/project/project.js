@@ -3,7 +3,7 @@
 angular.module('calendarApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/project', {
+      .when('/projects', {
         templateUrl: 'app/project/project.html',
         controller: 'ProjectCtrl'
       });

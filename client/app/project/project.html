@@ -10,8 +10,8 @@
       </div>
     </div>
 
-    <div id="project-container">
-      <div class="project row"  ng-repeat="project in projects">
+    <ul id="project-container">
+      <li class="project row"  ng-repeat="project in projects">
         <form novalidate name="{{'form' + $index}}" ng-submit="update($index)">
           <div class="form-group col-sm-3" ng-class="{ 'has-success': {{'form' + $index}}.$invalid && {{'form' + $index}}.color.$valid && submitted[{{$index}}],
                                               'has-error': submitted[{{$index}}] && {{'form' + $index}}.color.$invalid }">
@@ -30,21 +30,21 @@
             </p>
           </div>
           <div class="col-sm-1">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-block btn-primary">
               <span class="glyphicon glyphicon-floppy-disk"></span>
               <span class="sr-only">Update</span>
             </button>
           </div>
           <div class="col-sm-1">
-            <button type="button" class="btn btn-default" ng-click="delete($index)">
+            <button type="button" class="btn btn-block btn-default" ng-click="delete($index)">
               <span class="glyphicon glyphicon-trash"></span>
               <span class="sr-only">Delete</span>
             </button>
           </div>
         </form>
 
-      </div>
-    </div>
+      </li>
+    </ul>
 
     <h4>Add a New Project</h4>
 
@@ -66,7 +66,7 @@
         </p>
       </div>
       <div class="col-sm-2">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-block btn-primary">
           <span class="glyphicon glyphicon-plus"></span> Add Project
         </button>
       </div>

@@ -14,6 +14,8 @@ var config = require('./config/environment');
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
+console.log(config.mongo.options);
+
 // Populate DB with sample data
 if(config.seedDB) { require('./config/seed'); }
 
@@ -26,6 +28,7 @@ var socketio = require('socket.io')(server, {
 });
 require('./config/socketio')(socketio);
 require('./config/express')(app);
+require('./config/cors')(app);
 require('./routes')(app);
 
 // Start server

@@ -13,6 +13,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/ng-sortable/dist/ng-sortable.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -71,6 +72,7 @@
       <script src="bower_components/angular-route/angular-route.js"></script>
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-socket-io/socket.js"></script>
+      <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
       <!-- endbower -->
       <script src="socket.io/socket.io.js"></script>
       <!--<script src="http://192.168.0.102:9999/socket.io/socket.io.js"></script>-->
@@ -94,8 +96,6 @@
           <script src="app/member/member.js"></script>
           <script src="app/project/project.controller.js"></script>
           <script src="app/project/project.js"></script>
-          <script src="components/auth/auth.service.js"></script>
-          <script src="components/auth/user.service.js"></script>
           <script src="components/config/config.constant.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>

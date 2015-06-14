@@ -8,6 +8,7 @@
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Configuration = require('../api/configuration/configuration.model');
+var MemberHighestPos = require('../api/member/memberHighestPos.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -64,4 +65,10 @@ Configuration.find({}).remove(function() {
   }, function() {
     console.log('finished setting default configuration');
   });
-})
+});
+
+MemberHighestPos.find({}).remove(function() {
+  MemberHighestPos.create({
+    'highestPos': 1,
+  });
+});

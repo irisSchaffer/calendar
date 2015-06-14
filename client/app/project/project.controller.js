@@ -9,7 +9,7 @@ angular.module('calendarApp')
     $scope.submitted = {};
     $scope.alerts = [];
 
-    $http.get('/api/project').success(function (projects) {
+    $http.get('/api/projects').success(function (projects) {
       $scope.projects = projects;
     });
 
@@ -19,7 +19,7 @@ angular.module('calendarApp')
       $scope.newSubmitted = true;
 
       if (form.$valid) {
-        $http.post('/api/project', $scope.project)
+        $http.post('/api/projects', $scope.project)
           .success(function (project) {
             $scope.alerts.push({'type': 'success', 'heading': 'Great', 'msg': 'Project `' + project.name + '` was added successfully.'});
             $scope.projects.push($scope.project);
@@ -40,7 +40,7 @@ angular.module('calendarApp')
       var project = $scope.projects[index];
 
       if (form.$valid) {
-        $http.put('/api/project/' + project._id, project)
+        $http.put('/api/projects/' + project._id, project)
           .success(function (project) {
             $scope.alerts.push({'type': 'success', 'heading': 'Yippie', 'msg': 'Project `' + project.name + '` was updated successfully.'});
           })
@@ -54,7 +54,7 @@ angular.module('calendarApp')
       $scope.alerts = [];
       var project = $scope.projects[index];
 
-      $http.delete('/api/project/' + project._id)
+      $http.delete('/api/projects/' + project._id)
         .success(function() {
           $scope.projects.splice(index, index + 1);
           $scope.alerts.push({'type': 'success', 'heading': 'Yeah', 'msg': 'Project `' + project.name + '` was successfully deleted.'});

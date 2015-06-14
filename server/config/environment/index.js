@@ -24,6 +24,8 @@ var all = {
   // Should we populate the DB with sample data?
   seedDB: false,
 
+  timeZone: process.env.TZ,
+
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
     session: 'calendar-secret'
@@ -42,9 +44,13 @@ var all = {
   },
 
   google: {
-    clientID:     process.env.GOOGLE_ID || 'id',
-    clientSecret: process.env.GOOGLE_SECRET || 'secret',
-    callbackURL:  (process.env.DOMAIN || '') + '/auth/google/callback'
+    authUri: process.env.AUTH_URI,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    clientEmail: process.env.CLIENT_EMAIL,
+    tokenUri: process.env.TOKEN_URI,
+    redirectUri: process.env.REDIRECT_URI,
+    calendarScope: process.env.CALENDAR_SCOPE
   }
 };
 
