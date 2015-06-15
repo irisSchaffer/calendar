@@ -30,6 +30,7 @@ angular.module('calendarApp')
       $window.location.href = '/api/auth?name=' + JSON.stringify($scope.member.name);
     };
 
+    // Drag and Drop Listener
     $scope.dragControlListeners = {
       accept: function (sourceItemHandleScope, destSortableScope) { return true; },
       orderChanged: function(event) {
@@ -89,6 +90,8 @@ angular.module('calendarApp')
       });
     }
 
+
+    // Updates order of members and saves their new positions
     function updateSequence(event) {
       var src = event.source.index;
       var dest = event.dest.index;
