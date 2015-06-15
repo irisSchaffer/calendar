@@ -22,7 +22,7 @@ angular.module('calendarApp')
         $http.post('/api/projects', $scope.project)
           .success(function (project) {
             $scope.alerts.push({'type': 'success', 'heading': 'Great', 'msg': 'Project `' + project.name + '` was added successfully.'});
-            $scope.projects.push($scope.project);
+            $scope.projects.push(project);
             $scope.project = {};
           })
           .error(function (data) {
