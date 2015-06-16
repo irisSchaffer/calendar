@@ -40,7 +40,6 @@ exports.update = function(req, res, next) {
   };
 
   Member.update({_id: req.params.id}, member, {}, function(err, affRows) {
-    console.log(err, affRows);
     if (err) return res.status(400).json(err);
 
     res.json(200);

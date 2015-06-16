@@ -35,6 +35,14 @@ MemberSchema.path('name').validate(function(value, respond) {
   });
 }, 'You already have a team member of that name.');
 
+MemberSchema.virtual('credentials').get(function () {
+  return {
+    access_token: this.accessData.accessToken,
+    refresh_token: this.accessData.refreshToken,
+    expiry_date: true
+  }
+});
+
 
 MemberSchema.pre('save', function(next) {
   var member = this;
