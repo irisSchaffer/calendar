@@ -48,62 +48,49 @@ exports.getProjectColors = function(req, res) {
  */
 exports.setEvents = function(req, res) {
   Q.all([getConfig(), getProjects()])
-    .spread(function (configuration, projects) {
-      var promises = [];
-      var morning = configuration.morning;
-      var afternoon = configuration.afternoon;
-      var dpw = configuration.daysPerWeek;
+  .spread(function (configuration, projects) {
+    console.log("STARTING!");
+    var morning = configuration.morning;
+    var afternoon = configuration.afternoon;
+    var dpw = configuration.daysPerWeek;
 
-      var memberCalendars = req.body;
-      var promise = Q(true);
+    var memberCalendars = req.body;
+    var promise = Q();
 
-      memberCalendars.forEach(function (days, index) {
-        promise = promise.then(function () {
-          return getMember(index + 1)
-            .then(function (member) {
-              var oauth2Client = getAuth(member);
-              console.log("NOW HANDLING " + member.name + "'S STUFF!!");
+    memberCalendars.forEach(function (days, index) {
+      promise = promise.then(function() {
+        return getMember(index + 1).then(function(member) {
+          var auth = getAuth(member);
+          console.log("NOW HANDLING " + member.name + "'S STUFF!!");
 
-              return findAndDeleteEvents(days.length, dpw, oauth2Client, member.calendarId)
-              .then(function () {
-                console.log("GOING THROUGH ALL DAYS");
-                days.forEach(function (day, index) {
-                  if (day.morning) {
-                    promises.push(addEvent(
-                      projects[day.morning],
-                      getDateTime(index, dpw, morning.start),
-                      getDateTime(index, dpw, morning.end),
-                      oauth2Client,
-                      member.calendarId
-                    ));
-                  }
+          return findAndDeleteEvents(days.length, dpw, auth, member.calendarId).then(function () {
+            console.log("GOING THROUGH ALL DAYS");
+            var promises = [];
 
-                  if (day.afternoon) {
-                    promises.push(addEvent(
-                      projects[day.afternoon],
-                      getDateTime(index, dpw, afternoon.start),
-                      getDateTime(index, dpw, afternoon.end),
-                      oauth2Client,
-                      member.calendarId
-                    ));
-                  }
-                });
-              });
+            days.forEach(function (day, index) {
+              console.log("DAY " + index);
+              if (day.morning) {
+                promises.push(addEvent(projects[day.morning], getDateTime(index, dpw, morning.start), getDateTime(index, dpw, morning.end), auth, member.calendarId));
+              }
+
+              if (day.afternoon) {
+                promises.push(addEvent(projects[day.afternoon], getDateTime(index, dpw, afternoon.start), getDateTime(index, dpw, afternoon.end), auth, member.calendarId));
+              }
             });
+
+            return Q.all(promises);
           });
         });
-
-      return promise.then(function() {
-        return Q.all(promises);
       });
-    })
-    .then(function (data) {
-      console.log("RETURNING 200");
-      res.json(200, data);
-    }, function (err) {
-      console.log(err);
-      res.json(500, err);
-    }).done();
+    });
+
+    return promise;
+  })
+  .then(function () {
+    res.json(200);
+  }, function (err) {
+    res.json(500, err);
+  });
 };
 
 function getAuth(member) {
@@ -160,11 +147,15 @@ function getProjects() {
  * @returns {deferred.promise} Rejected with error on error, else resolved with member.
  */
 function getMember(position) {
+  console.log("GETTING MEMBER AT POS " + position);
   var deferred = Q.defer();
+
   Member.findOne({position: position}, function (err, member) {
     if (err) {
       deferred.reject(err);
     } else {
+      console.log("FOUND MEMBER AT POS " + position);
+
       deferred.resolve(member);
     }
   });
@@ -175,16 +166,19 @@ function getMember(position) {
 function findAndDeleteEvents(days, daysPerWeek, auth, calId) {
   console.log("NOW FINDIND AND DELETING EVENTS!!");
 
-  var promises = [];
   return findEvents(days, daysPerWeek, auth, calId)
-    .then(function(events) {
-      console.log("NOW DELETING EVENTS!");
-      events.forEach(function(event) {
-        promises.push(deleteEvent(event.id, auth, calId));
-      });
+  .then(function(events) {
 
-      return Q.all(promises);
-    });
+    return Q.all(events.map(function(event) {
+      return deleteEvent(event.id, auth, calId);
+    }));
+
+    //return events.reduce(function(promise, event) {
+    //  return promise.then(function(result) {
+    //    return deleteEvent(event.id, auth, calId);
+    //  });
+    //}, Q());
+  });
 }
 
 /**
@@ -213,6 +207,7 @@ function findEvents(days, daysPerWeek, auth, calId) {
     if(err) {
       deferred.reject(err);
     } else {
+      console.log("found events");
       deferred.resolve(events.items);
     }
   });
@@ -228,22 +223,20 @@ function findEvents(days, daysPerWeek, auth, calId) {
  * @returns {deferred.promise} A Promise being rejected with an error if one occurs or resolved if the event is deleted
  */
 function deleteEvent(eventId, auth, calId) {
+  console.log("STARTING TO DELETE AN EVENT");
   var deferred = Q.defer();
 
-  calendar.events.delete({
-    auth: auth,
-    calendarId: calId,
-    eventId: eventId
-  }, function(err) {
+  calendar.events.delete({auth: auth, calendarId: calId, eventId: eventId}, function(err) {
     if(err) {
-      console.log('couldnt remove ' + eventId);
-
+      console.log('couldnt remove event ' + eventId);
       deferred.reject(err);
     } else {
-      console.log('removed ' + eventId);
-      deferred.resolve();
+      console.log('removed event ' + eventId);
+      deferred.resolve('removed event');
     }
   });
+
+  return deferred.promise;
 }
 
 /**
@@ -256,6 +249,7 @@ function deleteEvent(eventId, auth, calId) {
  * @returns {deferred.promise} A Promise being rejected with an error, if one occurs or resolved with the created event's link
  */
 function addEvent(project, start, end, auth, calId) {
+  console.log("STARTING TO ADD AN EVENT");
   var deferred = Q.defer();
 
   var event = {
@@ -279,13 +273,10 @@ function addEvent(project, start, end, auth, calId) {
     resource: event
   }, function(err, resultEvent) {
     if (err) {
-      console.log('calender insert err', err);
-      console.log('calender insert event', event);
-      console.log('calender insert auth', auth);
-      console.log('calender insert calId', calId);
+      console.log('calender insert err');
       deferred.reject(err);
     } else {
-      console.log('calender insert succ', resultEvent);
+      console.log('calender insert succ');
 
       deferred.resolve(resultEvent);
     }
