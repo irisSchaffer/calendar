@@ -59,22 +59,22 @@ exports.setEvents = function(req, res) {
     memberCalendars.forEach(function (days, index) {
       promise = promise.then(function() {
         return getMember(index + 1).then(function(member) {
-          var auth = getAuth(member);
+          return getAuth(member).then(function(auth) {
+            return findAndDeleteEvents(days.length, dpw, auth, member.calendarId).then(function () {
+              var promises = [];
 
-          return findAndDeleteEvents(days.length, dpw, auth, member.calendarId).then(function () {
-            var promises = [];
+              days.forEach(function (day, index) {
+                if (day.morning) {
+                  promises.push(addEvent(projects[day.morning], getDateTime(index, dpw, morning.start), getDateTime(index, dpw, morning.end), auth, member.calendarId));
+                }
 
-            days.forEach(function (day, index) {
-              if (day.morning) {
-                promises.push(addEvent(projects[day.morning], getDateTime(index, dpw, morning.start), getDateTime(index, dpw, morning.end), auth, member.calendarId));
-              }
+                if (day.afternoon) {
+                  promises.push(addEvent(projects[day.afternoon], getDateTime(index, dpw, afternoon.start), getDateTime(index, dpw, afternoon.end), auth, member.calendarId));
+                }
+              });
 
-              if (day.afternoon) {
-                promises.push(addEvent(projects[day.afternoon], getDateTime(index, dpw, afternoon.start), getDateTime(index, dpw, afternoon.end), auth, member.calendarId));
-              }
+              return Q.all(promises);
             });
-
-            return Q.all(promises);
           });
         });
       });
@@ -90,15 +90,36 @@ exports.setEvents = function(req, res) {
 };
 
 /**
- * Creates oauth2 authenticator for member
+ * Creates oauth2 authenticator for member and updates access token for member if necessary.
+ *
  * @param {object} member
  * @returns {object} OAuth2 Client
  */
 function getAuth(member) {
   var auth = new OAuth2(config.google.clientId, config.google.clientSecret, config.google.redirectUri);
   auth.setCredentials(member.credentials);
+  var deferred = Q.defer();
 
-  return auth;
+  auth.getAccessToken(function(err, token, response) {
+    if(err) {
+      deferred.reject(err);
+    } else {
+      if(response) {
+        member.credentials = response.body;
+        member.save(function(err, member) {
+          if (err) {
+            deferred.reject(err);
+          } else {
+            auth.setCredentials(member.credentials);
+            deferred.resolve(auth);
+          }
+        });
+      }
+      deferred.resolve(auth);
+    }
+  });
+
+  return deferred.promise;
 }
 
 /**
