@@ -1,8 +1,12 @@
 'use strict';
 
+var Q = require('q');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var MemberHighestPosSchema = require('./memberHighestPos.model.js');
+var config = require('../../config/environment');
+var google = require('googleapis');
+var OAuth2 = google.auth.OAuth2;
+var calendar = google.calendar('v3');
 
 var MemberSchema = new Schema({
   name: {
@@ -19,7 +23,8 @@ var MemberSchema = new Schema({
   },
   accessData: {
     accessToken: String,
-    refreshToken: String
+    refreshToken: String,
+    expiryDate: Date
   }
 });
 
@@ -39,8 +44,12 @@ MemberSchema.virtual('credentials').get(function () {
   return {
     access_token: this.accessData.accessToken,
     refresh_token: this.accessData.refreshToken,
-    expiry_date: true
-  }
+    expiry_date: this.accessData.expiryDate ? this.accessData.expiryDate : true
+  };
+}).set(function(googleResponse) {
+  this.accessData.accessToken = googleResponse.access_token;
+  this.accessData.refreshToken = googleResponse.refresh_token;
+  this.accessData.expiryDate = googleResponse.expiry_date;
 });
 
 
@@ -48,10 +57,31 @@ MemberSchema.pre('save', function(next) {
   var member = this;
   if (member.position) return next();
 
-  MemberHighestPosSchema.findOneAndUpdate({}, { $inc: { highestPos: 1 } }, function (err, highestPos) {
-    if (err) next(err);
-    member.position = highestPos.highestPos - 1;
+  this.constructor.count({}, function(err, c) {
+    if(err) return next(err);
+
+    member.position = c + 1;
     next();
+  });
+});
+
+MemberSchema.post('remove', function() {
+  var oauth2Client = new OAuth2(config.google.clientId, config.google.clientSecret, config.google.redirectUri);
+  oauth2Client.setCredentials(this.credentials);
+  oauth2Client.revokeCredentials(function(err) {
+    if (err) throw new Error(err);
+  });
+
+  this.constructor.find({}, function(err, members) {
+    if(err) throw new Error(err);
+
+    members.forEach(function(member, index) {
+      member.position = index + 1;
+      member.save(function(err, member) {
+        if(err) throw new Error(err);
+      });
+    });
+
   });
 });
 

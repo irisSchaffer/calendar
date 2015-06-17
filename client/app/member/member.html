@@ -17,7 +17,7 @@
     <ul id="member-container" data-as-sortable="dragControlListeners" data-ng-model="members">
       <li class="member row"  ng-repeat="member in members" data-as-sortable-item>
         <form novalidate name="{{'form' + $index}}" ng-submit="update($index)" data-as-sortable-item-handle>
-          <div class="col-sm-1 position">{{ member.position }}.</div>
+          <div class="col-sm-1 position">{{ $index + 1 }}.</div>
           <div class="form-group col-sm-7 col-lg-9" ng-class="{ 'has-success': {{'form' + $index}}.$invalid && {{'form' + $index}}.name.$valid && submitted[$index],
                                               'has-error': submitted[$index] && {{'form' + $index}}.name.$invalid }">
             <label class="control-label sr-only" for="name">Member's Name</label>

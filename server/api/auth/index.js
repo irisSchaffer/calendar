@@ -53,16 +53,13 @@ router.get('/callback', function(req, res, next) {
 
         var member = new Member({
           name: name,
-          calendarId: cal.id,
-          accessData: {
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token
-          }
+          calendarId: cal.id
         });
+
+        member.credentials = tokens;
 
         member.save(function(err, member) {
           if (err) {
-            console.log(err, member);
             return redirectError(err, res, name);
           }
 
@@ -74,7 +71,6 @@ router.get('/callback', function(req, res, next) {
 });
 
 var redirectError = function(err, res, name) {
-  console.log(err);
   return res.redirect(getRedirectionUrl(name) + '&success=false');
 }
 

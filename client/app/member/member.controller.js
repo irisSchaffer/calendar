@@ -16,10 +16,10 @@ angular.module('calendarApp')
     });
 
     if ($routeParams.success !== undefined) {
-      $scope.member.name = $routeParams.name;
       if(JSON.parse($routeParams.success) === true) {
-        $scope.alerts.push({'type': 'success', 'heading': 'Yippie', 'msg': 'Member `' + $scope.member.name + '` was authenticated and saved successfully.'});
+        $scope.alerts.push({'type': 'success', 'heading': 'Yippie', 'msg': 'Member `' + $routeParams.name + '` was authenticated and saved successfully.'});
       } else {
+        $scope.member.name = $routeParams.name;
         $scope.alerts.push({'type': 'danger', 'heading': 'Oops', 'msg': 'Something went wrong and we couldn\'t save member `' + $scope.member.name + '`. Please try again later.'});
       }
       $location.search({});
@@ -70,7 +70,7 @@ angular.module('calendarApp')
 
       $http.delete('/api/members/' + member._id)
         .success(function() {
-          $scope.members.splice(index, index + 1);
+          $scope.members.splice(index, 1);
           $scope.alerts.push({'type': 'success', 'heading': 'Yeah', 'msg': 'Member `' + member.name + '` was successfully deleted.'});
         })
         .error(function(data) {
