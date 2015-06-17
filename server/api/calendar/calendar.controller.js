@@ -11,7 +11,7 @@ var OAuth2 = google.auth.OAuth2;
 var calendar = google.calendar('v3');
 
 /**
- * Returns array of projects' colors of form project._id: project.color
+ * Returns array of projects' colors of form [project._id: project.color]
  * @param {object} req Request
  * @param {object} res Response - 500 with errors or 200 with color array on success
  */
@@ -49,7 +49,6 @@ exports.getProjectColors = function(req, res) {
 exports.setEvents = function(req, res) {
   Q.all([getConfig(), getProjects()])
   .spread(function (configuration, projects) {
-    console.log("STARTING!");
     var morning = configuration.morning;
     var afternoon = configuration.afternoon;
     var dpw = configuration.daysPerWeek;
@@ -61,14 +60,11 @@ exports.setEvents = function(req, res) {
       promise = promise.then(function() {
         return getMember(index + 1).then(function(member) {
           var auth = getAuth(member);
-          console.log("NOW HANDLING " + member.name + "'S STUFF!!");
 
           return findAndDeleteEvents(days.length, dpw, auth, member.calendarId).then(function () {
-            console.log("GOING THROUGH ALL DAYS");
             var promises = [];
 
             days.forEach(function (day, index) {
-              console.log("DAY " + index);
               if (day.morning) {
                 promises.push(addEvent(projects[day.morning], getDateTime(index, dpw, morning.start), getDateTime(index, dpw, morning.end), auth, member.calendarId));
               }
@@ -93,6 +89,11 @@ exports.setEvents = function(req, res) {
   });
 };
 
+/**
+ * Creates oauth2 authenticator for member
+ * @param {object} member
+ * @returns {object} OAuth2 Client
+ */
 function getAuth(member) {
   var auth = new OAuth2(config.google.clientId, config.google.clientSecret, config.google.redirectUri);
   auth.setCredentials(member.credentials);
@@ -147,15 +148,12 @@ function getProjects() {
  * @returns {deferred.promise} Rejected with error on error, else resolved with member.
  */
 function getMember(position) {
-  console.log("GETTING MEMBER AT POS " + position);
   var deferred = Q.defer();
 
   Member.findOne({position: position}, function (err, member) {
     if (err) {
       deferred.reject(err);
     } else {
-      console.log("FOUND MEMBER AT POS " + position);
-
       deferred.resolve(member);
     }
   });
@@ -164,20 +162,12 @@ function getMember(position) {
 }
 
 function findAndDeleteEvents(days, daysPerWeek, auth, calId) {
-  console.log("NOW FINDIND AND DELETING EVENTS!!");
-
   return findEvents(days, daysPerWeek, auth, calId)
   .then(function(events) {
 
     return Q.all(events.map(function(event) {
       return deleteEvent(event.id, auth, calId);
     }));
-
-    //return events.reduce(function(promise, event) {
-    //  return promise.then(function(result) {
-    //    return deleteEvent(event.id, auth, calId);
-    //  });
-    //}, Q());
   });
 }
 
@@ -190,7 +180,6 @@ function findAndDeleteEvents(days, daysPerWeek, auth, calId) {
  * @returns {deferred.promise} A Promise being rejected with an error if one occurs or resolved with an array of events
  */
 function findEvents(days, daysPerWeek, auth, calId) {
-  console.log("NOW FINDING EVENTS");
   var deferred = Q.defer();
   var startTime = new Date(getDate(0, daysPerWeek));
   startTime.setHours(0, 0);
@@ -207,7 +196,6 @@ function findEvents(days, daysPerWeek, auth, calId) {
     if(err) {
       deferred.reject(err);
     } else {
-      console.log("found events");
       deferred.resolve(events.items);
     }
   });
@@ -223,15 +211,12 @@ function findEvents(days, daysPerWeek, auth, calId) {
  * @returns {deferred.promise} A Promise being rejected with an error if one occurs or resolved if the event is deleted
  */
 function deleteEvent(eventId, auth, calId) {
-  console.log("STARTING TO DELETE AN EVENT");
   var deferred = Q.defer();
 
   calendar.events.delete({auth: auth, calendarId: calId, eventId: eventId}, function(err) {
     if(err) {
-      console.log('couldnt remove event ' + eventId);
       deferred.reject(err);
     } else {
-      console.log('removed event ' + eventId);
       deferred.resolve('removed event');
     }
   });
@@ -249,7 +234,6 @@ function deleteEvent(eventId, auth, calId) {
  * @returns {deferred.promise} A Promise being rejected with an error, if one occurs or resolved with the created event's link
  */
 function addEvent(project, start, end, auth, calId) {
-  console.log("STARTING TO ADD AN EVENT");
   var deferred = Q.defer();
 
   var event = {
@@ -273,11 +257,8 @@ function addEvent(project, start, end, auth, calId) {
     resource: event
   }, function(err, resultEvent) {
     if (err) {
-      console.log('calender insert err');
       deferred.reject(err);
     } else {
-      console.log('calender insert succ');
-
       deferred.resolve(resultEvent);
     }
   });
