@@ -47,6 +47,7 @@ exports.getProjectColors = function(req, res) {
  * @param {object} res Response - 500 with errors or 200 with links to the created events
  */
 exports.setEvents = function(req, res) {
+  console.log(req.body)
   Q.all([getConfig(), getProjects()])
   .spread(function (configuration, projects) {
     var morning = configuration.morning;
@@ -59,21 +60,26 @@ exports.setEvents = function(req, res) {
     memberCalendars.forEach(function (days, index) {
       promise = promise.then(function() {
         return getMember(index + 1).then(function(member) {
+          console.log('user ' + member.name)
           return getAuth(member).then(function(auth) {
             return findAndDeleteEvents(days.length, dpw, auth, member.calendarId).then(function () {
-              var promises = [];
 
-              days.forEach(function (day, index) {
-                if (day.morning) {
-                  promises.push(addEvent(projects[day.morning], getDateTime(index, dpw, morning.start), getDateTime(index, dpw, morning.end), auth, member.calendarId));
-                }
+              // wait for the events to be inserted before inserting the next one, otherwise we'll get BackEnd Errors
+              // because we're sending too many requests to google
+              return days.reduce(function(promise, day, dayIdx) {
+                return promise.then(function(result) {
+                  // to get a little more performance out of this, still send morning and afternoon events at the same time
+                  var p = []
+                  if (day.morning) {
+                    p.push(addEvent(projects[day.morning], getDateTime(dayIdx, dpw, morning.start), getDateTime(dayIdx, dpw, morning.end), auth, member.calendarId));
+                  }
 
-                if (day.afternoon) {
-                  promises.push(addEvent(projects[day.afternoon], getDateTime(index, dpw, afternoon.start), getDateTime(index, dpw, afternoon.end), auth, member.calendarId));
-                }
-              });
-
-              return Q.all(promises);
+                  if (day.afternoon) {
+                    p.push(addEvent(projects[day.afternoon], getDateTime(dayIdx, dpw, afternoon.start), getDateTime(dayIdx, dpw, afternoon.end), auth, member.calendarId));
+                  }
+                  return Q.all(p);
+                });
+              }, Q());
             });
           });
         });
@@ -85,6 +91,7 @@ exports.setEvents = function(req, res) {
   .then(function () {
     res.json(200);
   }, function (err) {
+      console.log(err);
     res.json(500, err);
   });
 };
@@ -182,13 +189,24 @@ function getMember(position) {
   return deferred.promise;
 }
 
+/**
+ * Finds all events for a member with auth auth in calendar of id calId and then removes them one after another
+ * @param {int} days Number of days covered by calendar
+ * @param {int} daysPerWeek days per week (i.e. 5 or 7)
+ * @param {object} auth OAuth2 authentication
+ * @param {string} calId Calendar ID
+ * @returns {object} Promise - resolved if all events were found and removed successfully, rejected otherwise
+ */
 function findAndDeleteEvents(days, daysPerWeek, auth, calId) {
+  console.log('finding and removing events')
   return findEvents(days, daysPerWeek, auth, calId)
   .then(function(events) {
 
-    return Q.all(events.map(function(event) {
-      return deleteEvent(event.id, auth, calId);
-    }));
+    return events.reduce(function(promise, event) {
+      return promise.then(function(result) {
+        return deleteEvent(event.id, auth, calId);
+      });
+    }, Q());
   });
 }
 
@@ -208,6 +226,10 @@ function findEvents(days, daysPerWeek, auth, calId) {
   var endTime = new Date(getDate(days, daysPerWeek));
   endTime.setHours(0, 0);
 
+  console.log(startTime);
+  console.log(endTime);
+  console.log(auth, calId);
+
   calendar.events.list({
     auth: auth,
     calendarId: calId,
@@ -217,6 +239,7 @@ function findEvents(days, daysPerWeek, auth, calId) {
     if(err) {
       deferred.reject(err);
     } else {
+      console.log('found events:', events.items);
       deferred.resolve(events.items);
     }
   });
@@ -238,6 +261,7 @@ function deleteEvent(eventId, auth, calId) {
     if(err) {
       deferred.reject(err);
     } else {
+      console.log('deleting event')
       deferred.resolve('removed event');
     }
   });
@@ -272,6 +296,7 @@ function addEvent(project, start, end, auth, calId) {
     },
   };
 
+  console.log('inserting event')
   calendar.events.insert({
     auth: auth,
     calendarId: calId,

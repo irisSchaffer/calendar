@@ -66,15 +66,17 @@ MemberSchema.pre('save', function(next) {
 });
 
 MemberSchema.post('remove', function() {
+  var member = this;
   var oauth2Client = new OAuth2(config.google.clientId, config.google.clientSecret, config.google.redirectUri);
-  auth.getAccessToken(function(err, token, response) {
+  oauth2Client.setCredentials(member.credentials);
+  oauth2Client.getAccessToken(function(err, token, response) {
     if (err) {
       throw new Error(err);
     } else {
       if (response) {
         oauth2Client.setCredentials(response.body);
       } else {
-        oauth2Client.setCredentials(this.credentials);
+        oauth2Client.setCredentials(member.credentials);
       }
 
       oauth2Client.revokeCredentials(function(err) {
