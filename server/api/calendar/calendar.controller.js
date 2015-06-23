@@ -234,7 +234,8 @@ function findEvents(days, daysPerWeek, auth, calId) {
     auth: auth,
     calendarId: calId,
     timeMin: startTime.toISOString(),
-    timeMax: endTime.toISOString()
+    timeMax: endTime.toISOString(),
+    maxResults: 2500 // without this we sometimes don't get results but only a nextPageToken...
   }, function(err, events) {
     if(err) {
       deferred.reject(err);
